@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { CodeRainCanvas } from "@/components/layout/CodeRainCanvas";
 import { Hero } from "@/components/sections/Hero";
 import { About } from "@/components/sections/About";
 import { Skills } from "@/components/sections/Skills";
@@ -17,6 +18,7 @@ export default function Home() {
 
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background text-foreground font-sans selection:bg-primary selection:text-primary-foreground">
+      <CodeRainCanvas />
       <Navbar />
       <main className="flex-1">
         <Hero />
