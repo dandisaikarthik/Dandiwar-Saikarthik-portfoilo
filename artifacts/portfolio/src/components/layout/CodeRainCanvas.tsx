@@ -36,25 +36,25 @@ export function CodeRainCanvas() {
     if (!ctx) return;
 
     let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = document.body.scrollHeight);
+    let height = (canvas.height = window.innerHeight);
 
     const onResize = () => {
       width = canvas.width = window.innerWidth;
-      height = canvas.height = document.body.scrollHeight;
+      height = canvas.height = window.innerHeight;
     };
     window.addEventListener("resize", onResize);
 
-    const COUNT = 55;
+    const COUNT = 40;
 
     const makeToken = (forceY?: number): Token => {
-      const size = 11 + Math.random() * 9;
+      const size = 12 + Math.random() * 10;
       return {
         text: CODE_TOKENS[Math.floor(Math.random() * CODE_TOKENS.length)],
-        x: Math.random() * width,
+        x: 20 + Math.random() * (width - 100),
         y: forceY !== undefined ? forceY : Math.random() * height,
         size,
-        alpha: 0.06 + Math.random() * 0.11,
-        speed: 0.22 + Math.random() * 0.4,
+        alpha: 0.18 + Math.random() * 0.22,
+        speed: 0.3 + Math.random() * 0.5,
       };
     };
 
@@ -62,12 +62,12 @@ export function CodeRainCanvas() {
 
     const anims = tokens.map((t) =>
       animate(t, {
-        alpha: [{ to: t.alpha * 0.25 }, { to: t.alpha }],
-        duration: 3000 + Math.random() * 3000,
+        alpha: [{ to: t.alpha * 0.35 }, { to: t.alpha }],
+        duration: 2500 + Math.random() * 2500,
         ease: "inOutSine",
         loop: true,
         direction: "alternate",
-        delay: Math.random() * 3000,
+        delay: Math.random() * 2500,
       })
     );
 
@@ -88,8 +88,8 @@ export function CodeRainCanvas() {
           t.alpha = fresh.alpha;
           t.speed = fresh.speed;
         }
-        ctx.font = `${t.size}px 'Space Grotesk', monospace`;
-        ctx.fillStyle = `rgba(234,88,12,${t.alpha})`;
+        ctx.font = `600 ${t.size}px 'Space Grotesk', monospace`;
+        ctx.fillStyle = `rgba(220,75,0,${t.alpha})`;
         ctx.fillText(t.text, t.x, t.y);
       }
 
@@ -108,7 +108,8 @@ export function CodeRainCanvas() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 z-0 pointer-events-none w-full h-full"
+      className="fixed inset-0 pointer-events-none"
+      style={{ zIndex: 9999, mixBlendMode: "multiply" }}
       data-testid="canvas-code-rain-global"
     />
   );
