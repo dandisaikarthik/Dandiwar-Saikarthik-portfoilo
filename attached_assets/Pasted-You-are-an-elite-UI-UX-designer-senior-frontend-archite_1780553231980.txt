@@ -1,0 +1,302 @@
+You are an elite UI/UX designer, senior frontend architect, recruiter, ATS optimization expert, and personal branding strategist.
+
+I have attached my resume.
+
+Your task is to create a premium, production-ready portfolio website that looks better than most developer portfolios on the internet and maximizes my chances of getting interviews for Software Engineer, SDE, Associate Software Engineer, Full Stack Developer, Graduate Engineer Trainee, and Software Developer roles.
+
+# Primary Objective
+
+Transform the attached resume into a highly professional personal brand website that:
+
+* Impresses recruiters within 5 seconds.
+* Passes ATS screening.
+* Highlights strengths even if I am a fresher.
+* Creates trust and credibility.
+* Encourages recruiters to contact me.
+* Looks like a portfolio of a top engineer.
+
+# Design Direction
+
+Create a modern futuristic portfolio inspired by:
+
+* Apple-level simplicity
+* Stripe-level polish
+* Vercel-level developer aesthetics
+* Linear.app quality animations
+* Modern SaaS startup websites
+
+The website must feel premium, clean, elegant, and memorable.
+
+# Tech Stack
+
+Use:
+
+* Next.js 15 App Router
+* React
+* TypeScript
+* Tailwind CSS
+* Framer Motion
+* Lucide Icons
+* ShadCN UI
+* SEO Best Practices
+
+# Website Structure
+
+## 1. Hero Section
+
+Create a stunning hero section with:
+
+* Professional headline generated from resume
+* Dynamic typing animation
+* Recruiter-focused value proposition
+* Animated CTA buttons
+* Resume download button
+* Contact button
+* Animated profile section
+
+Include:
+
+"Available for Software Engineering Opportunities"
+
+Create premium entrance animations.
+
+## 2. About Section
+
+Generate a compelling professional summary from resume.
+
+Include:
+
+* Career objective
+* Strengths
+* Passion for technology
+* Learning mindset
+* Problem-solving ability
+
+Make it sound confident but authentic.
+
+## 3. Skills Section
+
+Extract all skills from resume.
+
+Create animated skill categories:
+
+### Programming Languages
+
+### Frontend
+
+### Backend
+
+### Databases
+
+### Tools
+
+### Cloud
+
+### Version Control
+
+### Other Technologies
+
+Use:
+
+* Animated skill cards
+* Progress indicators
+* Hover interactions
+* Smooth transitions
+
+## 4. Experience Section
+
+If experience exists:
+
+Create premium timeline layout.
+
+If fresher:
+
+Create:
+
+* Training
+* Internships
+* Practical learning
+* Certifications
+* Hackathons
+
+Present professionally.
+
+## 5. Projects Section
+
+For every project:
+
+Generate:
+
+* Project title
+* Problem statement
+* Solution
+* Features
+* Technologies
+* Impact
+
+Include:
+
+* Live demo button
+* GitHub button
+* Technology badges
+* Project screenshots placeholders
+
+Create beautiful project cards with animations.
+
+## 6. Education Section
+
+Professional academic timeline.
+
+Include:
+
+* Degree
+* Institution
+* Percentage/CGPA
+* Year
+
+Create modern animated layout.
+
+## 7. Certifications Section
+
+Display as modern achievement cards.
+
+Include:
+
+* Certification name
+* Issuer
+* Date
+* Verification links if available
+
+## 8. Achievements Section
+
+Extract all achievements.
+
+Create animated achievement showcase.
+
+Use counters and visual effects.
+
+## 9. Resume Section
+
+Include:
+
+* Resume preview
+* Download button
+* ATS optimized resume information
+
+## 10. Contact Section
+
+Create fully functional contact form.
+
+Fields:
+
+* Name
+* Email
+* Subject
+* Message
+
+Requirements:
+
+* Validation
+* Error handling
+* Success notifications
+* Email integration
+
+Include social links.
+
+# Advanced Features
+
+## AI Inspired Background
+
+Add:
+
+* Animated gradients
+* Floating particles
+* Light glow effects
+* Interactive mouse movement effects
+
+Must remain professional.
+
+## Recruiter Conversion Features
+
+Add:
+
+* Availability status
+* Quick contact CTA
+* Why Hire Me section
+* Key strengths section
+* Career goals section
+
+## Performance
+
+Target:
+
+* Lighthouse 95+
+* SEO 100
+* Accessibility 100
+* Best Practices 100
+
+# ATS Optimization
+
+Must:
+
+* Use semantic HTML
+* Include all keywords from resume
+* Use proper heading hierarchy
+* Structured data schema
+* Open Graph tags
+* Twitter cards
+* Sitemap
+* Robots.txt
+
+# SEO
+
+Generate:
+
+* Meta title
+* Meta description
+* Keywords
+* Open Graph tags
+* Structured schema
+
+# Animations
+
+Use Framer Motion extensively:
+
+* Scroll reveals
+* Stagger animations
+* Hover animations
+* Floating effects
+* Page transitions
+* Loading screens
+* Animated counters
+* Text reveal effects
+
+Animations must feel premium and smooth.
+
+# Deliverables
+
+Provide:
+
+1. Complete production-ready source code
+2. Folder structure
+3. Components
+4. Tailwind configuration
+5. TypeScript types
+6. SEO setup
+7. Deployment guide
+8. README
+9. Vercel deployment instructions
+10. Environment variables setup
+
+# Content Rules
+
+* Extract every relevant detail from attached resume.
+* Never invent achievements.
+* Improve language professionally.
+* Make achievements measurable where data exists.
+* Showcase strengths effectively.
+* Optimize for recruiter engagement.
+
+# Final Goal
+
+Build a portfolio so impressive that recruiters immediately perceive me as a capable software engineer, even as a fresher, and significantly increase my chances of receiving interview calls.
