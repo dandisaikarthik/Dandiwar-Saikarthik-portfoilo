@@ -163,7 +163,7 @@ export function Hero() {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-10 leading-relaxed"
           >
-            I'm a B.Tech graduate in AI &amp; Machine Learning with hands-on experience building full-stack web applications. During my internship at Vortexsoft Innovation, I developed a production-grade HRMS application end-to-end — from Figma wireframes to React.js frontend to Python Flask REST APIs. I enjoy building clean, scalable, and user-friendly interfaces and have a strong eye for design.
+            I'm a B.Tech graduate in AI &amp; Machine Learning.
           </motion.p>
 
           <motion.div
