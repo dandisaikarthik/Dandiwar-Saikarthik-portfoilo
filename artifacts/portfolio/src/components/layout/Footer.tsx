@@ -46,9 +46,6 @@ export function Footer() {
 
         <div className="text-sm text-muted-foreground">
           <p>© {new Date().getFullYear()} Dandiwar Saikarthik.</p>
-          <p className="text-xs text-muted-foreground/60 mt-1 flex items-center justify-center md:justify-end">
-            Built with React & Vite
-          </p>
         </div>
       </div>
     </footer>
