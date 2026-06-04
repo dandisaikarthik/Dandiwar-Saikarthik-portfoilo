@@ -3,9 +3,25 @@ import { useTypewriter } from "@/hooks/use-typewriter";
 import { Button } from "@/components/ui/button";
 import { Download, ArrowRight } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { animate } from "animejs";
+import { animate, createTimeline } from "animejs";
 
-function ParticleCanvas() {
+interface NNNode {
+  x: number;
+  y: number;
+  layer: number;
+  index: number;
+  pulse: number;
+}
+
+interface NNEdge {
+  from: NNNode;
+  to: NNNode;
+  progress: number;
+  active: boolean;
+  speed: number;
+}
+
+function NeuralNetCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -20,71 +36,155 @@ function ParticleCanvas() {
     const onResize = () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
+      buildNetwork();
     };
     window.addEventListener("resize", onResize);
 
-    const COUNT = 60;
-    const particles = Array.from({ length: COUNT }, () => ({
-      x: Math.random() * width,
-      y: Math.random() * height,
-      r: Math.random() * 1.8 + 0.4,
-      alpha: Math.random() * 0.5 + 0.1,
-    }));
+    const LAYERS = [4, 6, 6, 4, 2];
+    const ORANGE = "249,115,22";
+    const DEEP_ORANGE = "234,88,12";
 
-    const animations = particles.map((p, i) => {
-      return animate(p, {
-        x: { to: () => p.x + (Math.random() - 0.5) * 120 },
-        y: { to: () => p.y + (Math.random() - 0.5) * 120 },
-        alpha: { to: () => Math.random() * 0.55 + 0.05 },
-        duration: 3000 + Math.random() * 4000,
-        delay: i * 30,
-        ease: "inOutSine",
-        direction: "alternate",
-        loop: true,
+    let nodes: NNNode[] = [];
+    let edges: NNEdge[] = [];
+    let animations: ReturnType<typeof animate>[] = [];
+
+    function buildNetwork() {
+      nodes = [];
+      edges = [];
+      animations.forEach(a => a.cancel());
+      animations = [];
+
+      const totalLayers = LAYERS.length;
+      const xPad = width * 0.12;
+      const yPad = height * 0.18;
+      const xStep = (width - xPad * 2) / (totalLayers - 1);
+
+      LAYERS.forEach((count, layerIdx) => {
+        const x = xPad + layerIdx * xStep;
+        const totalH = height - yPad * 2;
+        const spacing = totalH / (count - 1 || 1);
+
+        for (let i = 0; i < count; i++) {
+          const y = count === 1 ? height / 2 : yPad + i * spacing;
+          nodes.push({ x, y, layer: layerIdx, index: i, pulse: 0 });
+        }
       });
-    });
 
-    const lines: { i: number; j: number }[] = [];
-    for (let i = 0; i < COUNT; i++) {
-      for (let j = i + 1; j < COUNT; j++) {
-        lines.push({ i, j });
-      }
-    }
-
-    let raf: number;
-    const draw = () => {
-      ctx.clearRect(0, 0, width, height);
-
-      for (const { i, j } of lines) {
-        const a = particles[i];
-        const b = particles[j];
-        const dist = Math.hypot(a.x - b.x, a.y - b.y);
-        if (dist < 130) {
-          const opacity = (1 - dist / 130) * 0.18;
-          ctx.beginPath();
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-          ctx.strokeStyle = `rgba(249,115,22,${opacity})`;
-          ctx.lineWidth = 0.8;
-          ctx.stroke();
+      for (let l = 0; l < LAYERS.length - 1; l++) {
+        const fromNodes = nodes.filter(n => n.layer === l);
+        const toNodes = nodes.filter(n => n.layer === l + 1);
+        for (const f of fromNodes) {
+          for (const t of toNodes) {
+            edges.push({ from: f, to: t, progress: -1, active: false, speed: 0.003 + Math.random() * 0.004 });
+          }
         }
       }
 
-      for (const p of particles) {
+      nodes.forEach((node, i) => {
+        const tl = createTimeline({ loop: true, delay: i * 180 });
+        tl.add(node, {
+          pulse: [{ to: 1 }],
+          duration: 1400,
+          ease: "inOutSine",
+        }).add(node, {
+          pulse: [{ to: 0 }],
+          duration: 1400,
+          ease: "inOutSine",
+        });
+        animations.push(tl as unknown as ReturnType<typeof animate>);
+      });
+
+      function activateRandomEdges() {
+        const inactive = edges.filter(e => !e.active);
+        const toActivate = Math.floor(inactive.length * 0.12);
+        for (let i = 0; i < toActivate; i++) {
+          const pick = inactive[Math.floor(Math.random() * inactive.length)];
+          if (pick) {
+            pick.active = true;
+            pick.progress = 0;
+          }
+        }
+        setTimeout(activateRandomEdges, 600);
+      }
+      activateRandomEdges();
+    }
+
+    buildNetwork();
+
+    let raf: number;
+
+    const draw = () => {
+      ctx.clearRect(0, 0, width, height);
+
+      for (const edge of edges) {
+        const { from, to } = edge;
+        const alpha = 0.09;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(249,115,22,${p.alpha})`;
+        ctx.moveTo(from.x, from.y);
+        ctx.lineTo(to.x, to.y);
+        ctx.strokeStyle = `rgba(${ORANGE},${alpha})`;
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+
+        if (edge.active) {
+          edge.progress += edge.speed;
+          if (edge.progress > 1.1) {
+            edge.active = false;
+            edge.progress = -1;
+          } else {
+            const t = Math.max(0, Math.min(1, edge.progress));
+            const px = from.x + (to.x - from.x) * t;
+            const py = from.y + (to.y - from.y) * t;
+
+            const grad = ctx.createRadialGradient(px, py, 0, px, py, 5);
+            grad.addColorStop(0, `rgba(${DEEP_ORANGE},0.9)`);
+            grad.addColorStop(1, `rgba(${ORANGE},0)`);
+            ctx.beginPath();
+            ctx.arc(px, py, 5, 0, Math.PI * 2);
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(px, py, 2, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255,255,255,0.9)`;
+            ctx.fill();
+          }
+        }
+      }
+
+      for (const node of nodes) {
+        const r = 5 + node.pulse * 3;
+        const baseAlpha = 0.25 + node.pulse * 0.55;
+
+        const grad = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, r * 2.5);
+        grad.addColorStop(0, `rgba(${DEEP_ORANGE},${baseAlpha})`);
+        grad.addColorStop(0.5, `rgba(${ORANGE},${baseAlpha * 0.4})`);
+        grad.addColorStop(1, `rgba(${ORANGE},0)`);
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, r * 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${DEEP_ORANGE},${baseAlpha})`;
+        ctx.fill();
+
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, r * 0.45, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${0.5 + node.pulse * 0.4})`;
         ctx.fill();
       }
 
       raf = requestAnimationFrame(draw);
     };
+
     draw();
 
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", onResize);
-      animations.forEach((a) => a.cancel());
+      animations.forEach(a => a.cancel());
     };
   }, []);
 
@@ -92,8 +192,8 @@ function ParticleCanvas() {
     <canvas
       ref={canvasRef}
       className="absolute inset-0 z-0 pointer-events-none"
-      style={{ opacity: 0.55 }}
-      data-testid="canvas-particles"
+      style={{ opacity: 0.6 }}
+      data-testid="canvas-neural-net"
     />
   );
 }
@@ -117,33 +217,25 @@ export function Hero() {
       id="hero"
       className="relative min-h-[100dvh] flex items-center justify-center pt-20 overflow-hidden"
     >
-      {/* anime.js particle network canvas */}
-      <ParticleCanvas />
+      <NeuralNetCanvas />
 
-      {/* Background glow blobs */}
-      <div className="absolute inset-0 z-0 opacity-20 pointer-events-none flex items-center justify-center">
-        <div className="absolute top-1/4 -left-1/4 w-[50vw] h-[50vw] rounded-full bg-primary/30 blur-[120px]" />
-        <div className="absolute bottom-1/4 -right-1/4 w-[40vw] h-[40vw] rounded-full bg-accent/20 blur-[100px]" />
+      <div className="absolute inset-0 z-0 opacity-15 pointer-events-none">
+        <div className="absolute top-1/4 -left-1/4 w-[50vw] h-[50vw] rounded-full bg-primary/30 blur-[140px]" />
+        <div className="absolute bottom-1/4 -right-1/4 w-[40vw] h-[40vw] rounded-full bg-accent/20 blur-[120px]" />
       </div>
-
-      {/* Grid overlay */}
-      <div className="absolute inset-0 z-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTAgMGg0MHY0MEgweiIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik0wIDEwaDQwTTEwIDB2NDBNMCAyMGg0ME0yMCAwdjQwTTAgMzBoNDBNMzAgMHY0MCIgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDUpIiBzdHJva2Utd2lkdGg9IjEiLz48L3N2Zz4=')] opacity-20 pointer-events-none" />
 
       <div className="container mx-auto px-6 md:px-12 relative z-10">
         <div className="max-w-4xl mx-auto flex flex-col items-start text-left">
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/80 border border-border text-sm text-muted-foreground mb-8"
+            className="text-sm font-medium text-primary mb-6 tracking-wide"
+            data-testid="text-availability"
           >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-            </span>
             Available for Opportunities
-          </motion.div>
+          </motion.p>
 
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -194,7 +286,6 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Scroll indicator */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
