@@ -10,9 +10,9 @@ import { Contact } from "@/components/sections/Contact";
 import { useEffect } from "react";
 
 export default function Home() {
-  // Ensure dark mode is active
+  // Light mode enforced
   useEffect(() => {
-    document.documentElement.classList.add("dark");
+    document.documentElement.classList.remove("dark");
   }, []);
 
   return (

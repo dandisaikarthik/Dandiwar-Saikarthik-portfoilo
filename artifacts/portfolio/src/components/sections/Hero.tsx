@@ -64,7 +64,7 @@ function ParticleCanvas() {
           ctx.beginPath();
           ctx.moveTo(a.x, a.y);
           ctx.lineTo(b.x, b.y);
-          ctx.strokeStyle = `rgba(99,102,241,${opacity})`;
+          ctx.strokeStyle = `rgba(249,115,22,${opacity})`;
           ctx.lineWidth = 0.8;
           ctx.stroke();
         }
@@ -73,7 +73,7 @@ function ParticleCanvas() {
       for (const p of particles) {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(139,92,246,${p.alpha})`;
+        ctx.fillStyle = `rgba(249,115,22,${p.alpha})`;
         ctx.fill();
       }
 
