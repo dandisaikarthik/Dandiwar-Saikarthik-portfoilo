@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 const skillCategories = [
   {
     title: "Programming Languages",
-    skills: ["Python", "JavaScript", "TypeScript", "HTML", "CSS", "SQL"],
+    skills: ["Python", "TypeScript", "HTML", "CSS", "SQL"],
   },
   {
     title: "Frameworks & Libraries",
@@ -12,7 +12,7 @@ const skillCategories = [
   },
   {
     title: "AI & Machine Learning",
-    skills: ["Supervised Learning", "Classification", "Computer Vision", "Audio Signal Processing"],
+    skills: ["Supervised Learning", "Classification", "Computer Vision"],
   },
   {
     title: "Design & UX",

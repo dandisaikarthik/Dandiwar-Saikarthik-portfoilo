@@ -9,7 +9,7 @@ export function Footer() {
             Dandiwar Saikarthik<span className="text-primary">.</span>
           </span>
           <p className="text-sm text-muted-foreground mt-2">
-            Software Engineer & AI/ML Specialist
+            Software Engineer & AI/ML
           </p>
         </div>
 
