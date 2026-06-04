@@ -3,25 +3,34 @@ import { useTypewriter } from "@/hooks/use-typewriter";
 import { Button } from "@/components/ui/button";
 import { Download, ArrowRight } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { animate, createTimeline } from "animejs";
+import { animate } from "animejs";
 
-interface NNNode {
+const CODE_TOKENS = [
+  "const", "import", "export", "function", "return",
+  "async", "await", "=>", "{ }", "</>", "[ ]",
+  "React", "Python", "TypeScript", "Flask",
+  "useState", "useEffect", "render()",
+  "def", "class", "if __name__",
+  "git commit", "npm run dev",
+  "API", "REST", "JSON",
+  "model.fit()", "predict()",
+  "SELECT *", "FROM", "WHERE",
+  "0x1A3F", "0b1010", "null",
+  "true", "false", "void",
+  "<div>", "</div>", "props",
+  "interface", "type", "enum",
+];
+
+interface Token {
+  text: string;
   x: number;
   y: number;
-  layer: number;
-  index: number;
-  pulse: number;
-}
-
-interface NNEdge {
-  from: NNNode;
-  to: NNNode;
-  progress: number;
-  active: boolean;
+  size: number;
+  alpha: number;
   speed: number;
 }
 
-function NeuralNetCanvas() {
+function CodeRainCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -36,144 +45,57 @@ function NeuralNetCanvas() {
     const onResize = () => {
       width = canvas.width = window.innerWidth;
       height = canvas.height = window.innerHeight;
-      buildNetwork();
     };
     window.addEventListener("resize", onResize);
 
-    const LAYERS = [4, 6, 6, 4, 2];
-    const ORANGE = "249,115,22";
-    const DEEP_ORANGE = "234,88,12";
+    const COUNT = 28;
 
-    let nodes: NNNode[] = [];
-    let edges: NNEdge[] = [];
-    let animations: ReturnType<typeof animate>[] = [];
+    const makeToken = (forceY?: number): Token => {
+      const size = 11 + Math.random() * 9;
+      return {
+        text: CODE_TOKENS[Math.floor(Math.random() * CODE_TOKENS.length)],
+        x: Math.random() * width,
+        y: forceY !== undefined ? forceY : Math.random() * height,
+        size,
+        alpha: 0.06 + Math.random() * 0.13,
+        speed: 0.25 + Math.random() * 0.45,
+      };
+    };
 
-    function buildNetwork() {
-      nodes = [];
-      edges = [];
-      animations.forEach(a => a.cancel());
-      animations = [];
+    const tokens: Token[] = Array.from({ length: COUNT }, () => makeToken());
 
-      const totalLayers = LAYERS.length;
-      const xPad = width * 0.12;
-      const yPad = height * 0.18;
-      const xStep = (width - xPad * 2) / (totalLayers - 1);
-
-      LAYERS.forEach((count, layerIdx) => {
-        const x = xPad + layerIdx * xStep;
-        const totalH = height - yPad * 2;
-        const spacing = totalH / (count - 1 || 1);
-
-        for (let i = 0; i < count; i++) {
-          const y = count === 1 ? height / 2 : yPad + i * spacing;
-          nodes.push({ x, y, layer: layerIdx, index: i, pulse: 0 });
-        }
-      });
-
-      for (let l = 0; l < LAYERS.length - 1; l++) {
-        const fromNodes = nodes.filter(n => n.layer === l);
-        const toNodes = nodes.filter(n => n.layer === l + 1);
-        for (const f of fromNodes) {
-          for (const t of toNodes) {
-            edges.push({ from: f, to: t, progress: -1, active: false, speed: 0.003 + Math.random() * 0.004 });
-          }
-        }
-      }
-
-      nodes.forEach((node, i) => {
-        const tl = createTimeline({ loop: true, delay: i * 180 });
-        tl.add(node, {
-          pulse: [{ to: 1 }],
-          duration: 1400,
-          ease: "inOutSine",
-        }).add(node, {
-          pulse: [{ to: 0 }],
-          duration: 1400,
-          ease: "inOutSine",
-        });
-        animations.push(tl as unknown as ReturnType<typeof animate>);
-      });
-
-      function activateRandomEdges() {
-        const inactive = edges.filter(e => !e.active);
-        const toActivate = Math.floor(inactive.length * 0.12);
-        for (let i = 0; i < toActivate; i++) {
-          const pick = inactive[Math.floor(Math.random() * inactive.length)];
-          if (pick) {
-            pick.active = true;
-            pick.progress = 0;
-          }
-        }
-        setTimeout(activateRandomEdges, 600);
-      }
-      activateRandomEdges();
-    }
-
-    buildNetwork();
+    const anims = tokens.map((t) =>
+      animate(t, {
+        alpha: [{ to: t.alpha * 0.3 }, { to: t.alpha }],
+        duration: 3000 + Math.random() * 3000,
+        ease: "inOutSine",
+        loop: true,
+        direction: "alternate",
+        delay: Math.random() * 3000,
+      })
+    );
 
     let raf: number;
 
     const draw = () => {
       ctx.clearRect(0, 0, width, height);
+      ctx.textBaseline = "middle";
 
-      for (const edge of edges) {
-        const { from, to } = edge;
-        const alpha = 0.09;
-        ctx.beginPath();
-        ctx.moveTo(from.x, from.y);
-        ctx.lineTo(to.x, to.y);
-        ctx.strokeStyle = `rgba(${ORANGE},${alpha})`;
-        ctx.lineWidth = 0.8;
-        ctx.stroke();
-
-        if (edge.active) {
-          edge.progress += edge.speed;
-          if (edge.progress > 1.1) {
-            edge.active = false;
-            edge.progress = -1;
-          } else {
-            const t = Math.max(0, Math.min(1, edge.progress));
-            const px = from.x + (to.x - from.x) * t;
-            const py = from.y + (to.y - from.y) * t;
-
-            const grad = ctx.createRadialGradient(px, py, 0, px, py, 5);
-            grad.addColorStop(0, `rgba(${DEEP_ORANGE},0.9)`);
-            grad.addColorStop(1, `rgba(${ORANGE},0)`);
-            ctx.beginPath();
-            ctx.arc(px, py, 5, 0, Math.PI * 2);
-            ctx.fillStyle = grad;
-            ctx.fill();
-
-            ctx.beginPath();
-            ctx.arc(px, py, 2, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(255,255,255,0.9)`;
-            ctx.fill();
-          }
+      for (const t of tokens) {
+        t.y -= t.speed;
+        if (t.y < -30) {
+          const fresh = makeToken(height + 30);
+          t.text = fresh.text;
+          t.x = fresh.x;
+          t.y = fresh.y;
+          t.size = fresh.size;
+          t.alpha = fresh.alpha;
+          t.speed = fresh.speed;
         }
-      }
 
-      for (const node of nodes) {
-        const r = 5 + node.pulse * 3;
-        const baseAlpha = 0.25 + node.pulse * 0.55;
-
-        const grad = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, r * 2.5);
-        grad.addColorStop(0, `rgba(${DEEP_ORANGE},${baseAlpha})`);
-        grad.addColorStop(0.5, `rgba(${ORANGE},${baseAlpha * 0.4})`);
-        grad.addColorStop(1, `rgba(${ORANGE},0)`);
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, r * 2.5, 0, Math.PI * 2);
-        ctx.fillStyle = grad;
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${DEEP_ORANGE},${baseAlpha})`;
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, r * 0.45, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(255,255,255,${0.5 + node.pulse * 0.4})`;
-        ctx.fill();
+        ctx.font = `${t.size}px 'Space Grotesk', monospace`;
+        ctx.fillStyle = `rgba(234,88,12,${t.alpha})`;
+        ctx.fillText(t.text, t.x, t.y);
       }
 
       raf = requestAnimationFrame(draw);
@@ -184,7 +106,7 @@ function NeuralNetCanvas() {
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", onResize);
-      animations.forEach(a => a.cancel());
+      anims.forEach((a) => a.cancel());
     };
   }, []);
 
@@ -192,24 +114,20 @@ function NeuralNetCanvas() {
     <canvas
       ref={canvasRef}
       className="absolute inset-0 z-0 pointer-events-none"
-      style={{ opacity: 0.6 }}
-      data-testid="canvas-neural-net"
+      data-testid="canvas-code-rain"
     />
   );
 }
 
 export function Hero() {
-  const typedText = useTypewriter([
-    "Software Engineer",
-    "UI/UX Designer",
-    "AI/ML Engineer"
-  ], 80, 40, 2000);
+  const typedText = useTypewriter(
+    ["Software Engineer", "UI/UX Designer", "AI/ML Engineer"],
+    80, 40, 2000
+  );
 
   const scrollTo = (href: string) => {
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
+    const el = document.querySelector(href);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -217,7 +135,7 @@ export function Hero() {
       id="hero"
       className="relative min-h-[100dvh] flex items-center justify-center pt-20 overflow-hidden"
     >
-      <NeuralNetCanvas />
+      <CodeRainCanvas />
 
       <div className="absolute inset-0 z-0 opacity-15 pointer-events-none">
         <div className="absolute top-1/4 -left-1/4 w-[50vw] h-[50vw] rounded-full bg-primary/30 blur-[140px]" />
@@ -243,9 +161,17 @@ export function Hero() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-5xl md:text-7xl lg:text-8xl font-bold font-display tracking-tight text-foreground leading-[1.1] mb-6"
           >
-            Hi, I'm <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">Dandiwar</span><br />
+            Hi, I'm{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
+              Dandiwar
+            </span>
+            <br />
             <span className="text-4xl md:text-6xl lg:text-7xl text-muted-foreground">
-              I am a <span className="text-foreground min-w-[300px] inline-block">{typedText}<span className="animate-pulse">_</span></span>
+              I am a{" "}
+              <span className="text-foreground min-w-[300px] inline-block">
+                {typedText}
+                <span className="animate-pulse">_</span>
+              </span>
             </span>
           </motion.h1>
 
@@ -266,8 +192,8 @@ export function Hero() {
           >
             <Button
               size="lg"
-              className="h-14 px-8 text-base shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] transition-all"
-              onClick={() => scrollTo('#contact')}
+              className="h-14 px-8 text-base transition-all"
+              onClick={() => scrollTo("#contact")}
               data-testid="btn-hero-contact"
             >
               Contact Me <ArrowRight className="ml-2 h-5 w-5" />
