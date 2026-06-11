@@ -45,7 +45,7 @@ export function Hero() {
           >
             Hi, I'm{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-accent">
-              Dandiwar
+              Dandiwar Saikarthik
             </span>
             <br />
             <span className="text-4xl md:text-6xl lg:text-7xl text-muted-foreground">
