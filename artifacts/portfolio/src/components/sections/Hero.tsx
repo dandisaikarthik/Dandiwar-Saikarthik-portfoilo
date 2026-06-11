@@ -5,7 +5,7 @@ import { Download, ArrowRight } from "lucide-react";
 
 export function Hero() {
   const typedText = useTypewriter(
-    ["Software Engineer", "UI/UX Designer", "AI/ML Engineer"],
+    ["Software Engineer", "UI/UX Designer", "AI/ML Graduate"],
     80, 40, 2000
   );
 
