@@ -107,15 +107,15 @@ export function Hero() {
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary to-accent opacity-20 blur-2xl scale-110" />
               {/* Orange border */}
               <div className="relative rounded-2xl p-[3px] bg-gradient-to-br from-primary via-accent to-primary/50">
-                <div className="relative rounded-2xl overflow-hidden bg-secondary w-72 h-96 md:w-80 md:h-[440px] lg:w-96 lg:h-[500px] flex items-end justify-center">
+                <div className="relative rounded-2xl overflow-hidden bg-secondary w-72 h-96 md:w-80 md:h-[440px] lg:w-96 lg:h-[500px]">
                   <img
                     src="/saikarthik-profile.png"
                     alt="Dandiwar Saikarthik"
-                    className="w-full object-contain"
+                    className="w-full h-full object-cover object-top"
                     data-testid="img-profile"
                   />
                   {/* Fade overlay to hide bottom cut line */}
-                  <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-secondary to-transparent pointer-events-none" />
+                  <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-secondary to-transparent pointer-events-none" />
                 </div>
               </div>
               {/* Floating badge */}
