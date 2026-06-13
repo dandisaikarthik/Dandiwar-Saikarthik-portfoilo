@@ -107,12 +107,11 @@ export function Hero() {
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary to-accent opacity-20 blur-2xl scale-110" />
               {/* Orange border ring */}
               <div className="relative rounded-2xl p-[3px] bg-gradient-to-br from-primary via-accent to-primary/50">
-                <div className="rounded-2xl overflow-hidden bg-secondary w-64 h-80 md:w-72 md:h-96 lg:w-80 lg:h-[420px]">
+                <div className="rounded-2xl overflow-hidden bg-secondary w-64 h-80 md:w-72 md:h-96 lg:w-80 lg:h-[420px] flex items-end justify-center">
                   <img
                     src="/saikarthik-profile.png"
                     alt="Dandiwar Saikarthik"
-                    className="w-full h-full object-cover"
-                    style={{ objectPosition: "center bottom" }}
+                    className="w-full object-contain"
                     data-testid="img-profile"
                   />
                 </div>
