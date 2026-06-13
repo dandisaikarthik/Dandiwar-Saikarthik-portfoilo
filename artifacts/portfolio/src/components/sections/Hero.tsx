@@ -111,7 +111,8 @@ export function Hero() {
                   <img
                     src="/saikarthik-profile.png"
                     alt="Dandiwar Saikarthik"
-                    className="w-full h-full object-cover object-top"
+                    className="w-full h-full object-cover"
+                    style={{ objectPosition: "center 8%" }}
                     data-testid="img-profile"
                   />
                 </div>
