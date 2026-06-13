@@ -103,13 +103,20 @@ export function Hero() {
             className="flex-shrink-0 flex items-center justify-center"
           >
             <div className="relative">
-              <div className="overflow-hidden w-64 h-80 md:w-72 md:h-96 lg:w-80 lg:h-[420px] flex items-end justify-center">
-                <img
-                  src="/saikarthik-profile.png"
-                  alt="Dandiwar Saikarthik"
-                  className="w-full object-contain"
-                  data-testid="img-profile"
-                />
+              {/* Outer glow */}
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary to-accent opacity-20 blur-2xl scale-110" />
+              {/* Orange border */}
+              <div className="relative rounded-2xl p-[3px] bg-gradient-to-br from-primary via-accent to-primary/50">
+                <div className="relative rounded-2xl overflow-hidden bg-secondary w-72 h-96 md:w-80 md:h-[440px] lg:w-96 lg:h-[500px] flex items-end justify-center">
+                  <img
+                    src="/saikarthik-profile.png"
+                    alt="Dandiwar Saikarthik"
+                    className="w-full object-contain"
+                    data-testid="img-profile"
+                  />
+                  {/* Fade overlay to hide bottom cut line */}
+                  <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-secondary to-transparent pointer-events-none" />
+                </div>
               </div>
               {/* Floating badge */}
               <motion.div
