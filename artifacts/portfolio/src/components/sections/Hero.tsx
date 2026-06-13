@@ -111,7 +111,8 @@ export function Hero() {
                   <img
                     src="/saikarthik-profile.png"
                     alt="Dandiwar Saikarthik"
-                    className="w-full h-full object-cover object-bottom"
+                    className="w-full h-full object-cover"
+                    style={{ objectPosition: "75% bottom" }}
                     data-testid="img-profile"
                   />
                   {/* Fade overlay to hide bottom cut line */}
